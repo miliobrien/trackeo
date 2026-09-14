@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #fbfcfd;
+  --color-card: #ffffff;
+  --color-ink: #14181f;
+  --color-graphite: #5a6472;
+  --color-rule: #e3e7ec;
+  --color-live: #0b7a5b;
+  --color-live-soft: #e6f2ee;
+
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+}
+
+html {
+  background-color: var(--color-paper);
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures everywhere a number is shown, so columns of durations align
+   and the running clock does not shift width as digits change. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
