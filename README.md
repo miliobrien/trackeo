@@ -3,13 +3,32 @@
 Cronómetro personal de trabajo. Medís una tarea, la tarea vive dentro de un proyecto, y el
 total de un proyecto es la suma de sus tareas.
 
-## Uso diario
+## Dónde está
+
+**https://miliobrien.github.io/trackeo/**
+
+Anda siempre, desde cualquier compu o celular, sin tener nada corriendo. Cada vez que se sube
+un cambio a `main`, GitHub corre los tests y publica la versión nueva sola.
+
+### Tenerla como app
+
+- **En la compu, con Chrome:** abrí el enlace y tocá el ícono de instalar a la derecha de la
+  barra de direcciones, o menú, Transmitir, guardar y compartir, Instalar página como app.
+  Queda un ícono en el escritorio y en el menú Inicio, y abre en su propia ventana.
+- **En el celular:** abrí el enlace, menú, Agregar a pantalla principal.
+
+La primera vez en cada dispositivo tocá Sincronizar y entrá con tu mail. Después te recuerda.
+
+El registro de cuentas nuevas está cerrado en Supabase: cualquiera puede abrir el enlace, pero
+solo tu cuenta entra.
+
+## Para desarrollar
 
 ```bash
 npm run dev
 ```
 
-Se abre en `http://localhost:3000`. El puerto está fijo a propósito, por dos razones que
+Se abre en `http://localhost:3000`. Es solo para probar cambios antes de subirlos. El puerto está fijo a propósito, por dos razones que
 están explicadas en `vite.config.ts`: el navegador guarda tus datos por dirección exacta, y
 esa es la dirección a la que Supabase devuelve el enlace de acceso.
 
