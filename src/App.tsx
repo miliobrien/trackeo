@@ -12,6 +12,7 @@ import { DayRibbon } from './components/DayRibbon'
 import { EntryList } from './components/EntryList'
 import { ProjectTotals } from './components/ProjectTotals'
 import { TimerBar } from './components/TimerBar'
+import dotLogo from './assets/dot-logo.svg'
 
 export default function App() {
   const projects = useLiveQuery(listProjects, [], [])
@@ -43,8 +44,12 @@ export default function App() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-      <header className="mb-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-        <h1 className="text-sm font-semibold tracking-[0.14em] uppercase">Trackeo</h1>
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+        <div className="flex items-center gap-3">
+          <img src={dotLogo} alt="DOT" className="h-5 w-auto" />
+          <span aria-hidden className="h-4 w-px bg-rule" />
+          <h1 className="text-sm font-semibold tracking-[0.14em] uppercase">Trackeo</h1>
+        </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <AccountBar
             status={sync.status}
