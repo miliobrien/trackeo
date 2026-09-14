@@ -8,7 +8,7 @@ vi.mock('./supabase', async () => {
 
 const { createFakeServer, seed, serverNow, useServer } = await import('./fakeServer')
 const { db, getMeta, setMeta } = await import('../db/schema')
-const { createProject, deleteEntry, listEntries, listProjects, startTimer, stopTimer, updateEntryTimes } =
+const { createProject, deleteEntry, listEntries, listProjects, startTimer, stopTimer, updateEntryTimes, resumeTask } =
   await import('../db/repo')
 const { countPending, prepareForUser, pull, push, syncNow } = await import('./engine')
 
@@ -280,5 +280,49 @@ describe('updateEntryTimes', () => {
     const before = (await listEntries())[0]
     await expect(updateEntryTimes(entry.id, Date.now() + HOUR, null)).rejects.toThrow()
     expect((await listEntries())[0]).toEqual(before)
+  })
+})
+
+describe('resumeTask', () => {
+  it('opens a new block on the same task and project, without retyping', async () => {
+    const projectId = await createProject('Sitio')
+    await startTimer('Maquetar', projectId)
+    await stopTimer()
+    const [first] = await listEntries()
+
+    await resumeTask(first.taskId)
+
+    const entries = await listEntries()
+    expect(entries).toHaveLength(2)
+    const resumed = entries.find((e) => e.id !== first.id)!
+    expect(resumed.taskId).toBe(first.taskId)
+    expect(resumed.projectId).toBe(projectId)
+    expect(resumed.running).toBe(1)
+    expect(await db.tasks.count()).toBe(1)
+  })
+
+  it('closes whatever was running before picking the task back up', async () => {
+    const projectId = await createProject('Sitio')
+    await startTimer('Primera', projectId)
+    await stopTimer()
+    const [first] = await listEntries()
+    await startTimer('Segunda', projectId)
+
+    await resumeTask(first.taskId)
+
+    const running = (await listEntries()).filter((e) => e.running === 1)
+    expect(running).toHaveLength(1)
+    expect(running[0].taskId).toBe(first.taskId)
+  })
+
+  it('queues the new block for the server', async () => {
+    const projectId = await createProject('Sitio')
+    await startTimer('Tarea', projectId)
+    await stopTimer()
+    await push(ME)
+    const [first] = await listEntries()
+
+    await resumeTask(first.taskId)
+    expect(await countPending()).toBeGreaterThan(0)
   })
 })

@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from 'date-fns'
+import { addDays, addWeeks, startOfDay, startOfWeek } from 'date-fns'
 import type { Entry } from '../db/schema'
 
 export const MINUTE = 60_000
@@ -75,6 +75,40 @@ export function formatShort(ms: number): string {
 /** Local wall-clock time, 24 hour, e.g. 09:41. */
 export function formatTimeOfDay(ts: number): string {
   return new Date(ts).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
+/**
+ * Half-open range [start, end) of the week `at` falls in, Monday to Sunday.
+ * Weeks start on Monday because that is when a working week starts, and it
+ * is what makes the weekly totals "reset" on the first workday.
+ */
+export function weekBounds(at: number | Date = Date.now()) {
+  const start = startOfWeek(at, { weekStartsOn: 1 })
+  return { start: start.getTime(), end: addWeeks(start, 1).getTime() }
+}
+
+/** Same rule as days: a block belongs to the week it started in. */
+export function startedInWeek(entry: Entry, at: number | Date = Date.now()): boolean {
+  const { start, end } = weekBounds(at)
+  return entry.startedAt >= start && entry.startedAt < end
+}
+
+/** 0 for Monday through 6 for Sunday, in local time. */
+export function weekdayIndex(ts: number): number {
+  return (new Date(ts).getDay() + 6) % 7
+}
+
+/** "8 al 14 de septiembre", or "29 de septiembre al 5 de octubre" across months. */
+export function formatWeekRange(at: number, now: number = Date.now()): string {
+  const { start, end } = weekBounds(at)
+  const first = new Date(start)
+  const last = new Date(end - 1)
+  const month = (d: Date) => d.toLocaleDateString('es', { month: 'long' })
+  const year = last.getFullYear() !== new Date(now).getFullYear() ? ` de ${last.getFullYear()}` : ''
+  if (first.getMonth() === last.getMonth()) {
+    return `${first.getDate()} al ${last.getDate()} de ${month(last)}${year}`
+  }
+  return `${first.getDate()} de ${month(first)} al ${last.getDate()} de ${month(last)}${year}`
 }
 
 /** Whether two instants fall on the same local calendar day. */

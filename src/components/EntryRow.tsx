@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Entry, Project, Task } from '../db/schema'
-import { deleteEntry, updateEntryTimes } from '../db/repo'
+import { deleteEntry, resumeTask, updateEntryTimes } from '../db/repo'
 import {
   entryDuration,
   formatDuration,
@@ -78,15 +78,40 @@ export function EntryRow({ entry, project, task, others, tasks, now }: Props) {
   return (
     <li className="group px-4 py-3">
       <div className="flex items-center gap-3">
-        <span
-          aria-hidden
-          className="size-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: project?.color ?? '#475569' }}
-        />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{task?.name ?? 'Tarea borrada'}</p>
-          <p className="truncate text-xs text-graphite">{project?.name ?? 'Sin proyecto'}</p>
-        </div>
+        {/* The whole name is the "keep going" control. Its dot turns into a play
+            mark on hover, so the affordance costs no room in the row. A block
+            that is already running has nothing to resume. */}
+        <button
+          type="button"
+          onClick={() => void resumeTask(entry.taskId)}
+          disabled={entry.running === 1 || !task || mode === 'edit'}
+          title={entry.running ? 'Esta tarea está en curso' : 'Seguir con esta tarea'}
+          aria-label={`Seguir con ${task?.name ?? 'esta tarea'}`}
+          className="group/resume flex min-w-0 flex-1 items-center gap-3 rounded-md text-left disabled:cursor-default"
+        >
+          <span className="relative flex size-3 shrink-0 items-center justify-center">
+            <span
+              aria-hidden
+              className="size-2.5 rounded-full group-enabled/resume:group-hover/resume:opacity-0"
+              style={{ backgroundColor: project?.color ?? '#475569' }}
+            />
+            <svg
+              aria-hidden
+              viewBox="0 0 10 10"
+              className="absolute size-3 opacity-0 group-enabled/resume:group-hover/resume:opacity-100"
+            >
+              <path d="M2 1 L9 5 L2 9 Z" fill={project?.color ?? '#475569'} />
+            </svg>
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-medium group-enabled/resume:group-hover/resume:underline group-enabled/resume:group-hover/resume:underline-offset-4">
+              {task?.name ?? 'Tarea borrada'}
+            </span>
+            <span className="block truncate text-xs text-graphite">
+              {project?.name ?? 'Sin proyecto'}
+            </span>
+          </span>
+        </button>
 
         {mode !== 'edit' && (
           <button

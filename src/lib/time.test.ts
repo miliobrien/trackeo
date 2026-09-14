@@ -7,6 +7,10 @@ import {
   entryDuration,
   formatDuration,
   formatDayName,
+  formatWeekRange,
+  startedInWeek,
+  weekBounds,
+  weekdayIndex,
   formatShort,
   fromDateInput,
   isSameDay,
@@ -275,5 +279,43 @@ describe('day labels', () => {
   it('adds the year only when it is not the current one', () => {
     expect(formatDayName(new Date(2026, 8, 11).getTime(), now)).not.toMatch(/2026/)
     expect(formatDayName(new Date(2025, 8, 11).getTime(), now)).toMatch(/2025/)
+  })
+})
+
+describe('weeks', () => {
+  it('runs Monday to Monday', () => {
+    const thursday = new Date(2026, 8, 10, 15).getTime()
+    const { start, end } = weekBounds(thursday)
+    expect(new Date(start).getDay()).toBe(1)
+    expect(new Date(start).getDate()).toBe(7)
+    expect(new Date(end).getDate()).toBe(14)
+    expect(new Date(end).getHours()).toBe(0)
+  })
+
+  it('puts Sunday night in the week that is ending, and Monday in the new one', () => {
+    const sunday = new Date(2026, 8, 13, 23, 59).getTime()
+    const monday = new Date(2026, 8, 14, 0, 1).getTime()
+    expect(weekBounds(sunday).start).not.toBe(weekBounds(monday).start)
+    expect(weekBounds(sunday).end).toBe(weekBounds(monday).start)
+  })
+
+  it('files a block under the week it started in', () => {
+    const late = new Date(2026, 8, 13, 22).getTime()
+    const block = entry(late, late + 4 * HOUR)
+    expect(startedInWeek(block, new Date(2026, 8, 9).getTime())).toBe(true)
+    expect(startedInWeek(block, new Date(2026, 8, 15).getTime())).toBe(false)
+  })
+
+  it('numbers weekdays from Monday', () => {
+    expect(weekdayIndex(new Date(2026, 8, 14).getTime())).toBe(0)
+    expect(weekdayIndex(new Date(2026, 8, 20).getTime())).toBe(6)
+  })
+
+  it('names a week inside one month, and one that spans two', () => {
+    const now = new Date(2026, 8, 14).getTime()
+    expect(formatWeekRange(new Date(2026, 8, 9).getTime(), now)).toBe('7 al 13 de septiembre')
+    expect(formatWeekRange(new Date(2026, 8, 30).getTime(), now)).toBe(
+      '28 de septiembre al 4 de octubre',
+    )
   })
 })

@@ -93,6 +93,34 @@ export async function startTimer(taskName: string, projectId: string): Promise<s
   })
 }
 
+/**
+ * Picks a task back up: a new block on the same task and project, starting
+ * now. The task is addressed by id, so continuing never depends on retyping
+ * its name exactly, and whatever was running is closed in the same step.
+ */
+export async function resumeTask(taskId: string): Promise<string> {
+  return db.transaction('rw', db.tasks, db.entries, async () => {
+    const task = await db.tasks.get(taskId)
+    if (!task) throw new Error('Esa tarea ya no existe')
+
+    const now = Date.now()
+    await closeRunning(now)
+    await db.tasks.put({ ...task, lastUsedAt: now, ...stamp(now) })
+
+    const entry: Entry = {
+      id: newId(),
+      taskId: task.id,
+      projectId: task.projectId,
+      startedAt: now,
+      endedAt: null,
+      running: 1,
+      ...stamp(now),
+    }
+    await db.entries.add(entry)
+    return entry.id
+  })
+}
+
 export function stopTimer() {
   return db.transaction('rw', db.entries, () => closeRunning(Date.now()))
 }

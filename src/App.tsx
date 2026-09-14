@@ -72,7 +72,7 @@ export default function App() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <EntryList entries={visible} projects={projects} tasks={tasks} day={day} now={now} />
-        <ProjectTotals entries={entries} projects={projects} now={now} />
+        <ProjectTotals entries={entries} projects={projects} day={day} now={now} />
       </div>
     </div>
   )

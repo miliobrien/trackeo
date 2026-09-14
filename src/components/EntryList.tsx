@@ -44,7 +44,7 @@ export function EntryList({ entries, projects, tasks, day, now }: Props) {
         ))}
       </ul>
       <p className="border-t border-rule px-4 py-2.5 text-xs text-graphite">
-        Tocá un horario para corregirlo.
+        Tocá una tarea para seguir con ella, o su horario para corregirlo.
       </p>
     </Panel>
   )

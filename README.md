@@ -51,8 +51,12 @@ ventana.
   allá de hoy porque no hay nada que ver ahí.
 - **La lista** muestra los bloques del día elegido. La `×` de cada fila borra un bloque, y
   pregunta antes.
-- **Total por proyecto** suma todo lo registrado desde siempre, sin importar qué día estés
-  mirando. Es la respuesta a cuánto te llevó cada trabajo.
+- **Por proyecto** muestra la semana, de lunes a domingo, en la que cae el día elegido. Cada
+  proyecto tiene su total y siete celdas, una por día, para ver cómo se repartió. Arranca
+  vacía cada lunes sin borrar nada: la semana anterior está a una flecha. La pestaña
+  **Histórico** muestra el total de siempre.
+- **Seguir con una tarea:** tocá su nombre en la lista y arranca un bloque nuevo en esa misma
+  tarea y proyecto, sin volver a escribirla. Si había otro cronómetro andando, se frena solo.
 
 Mientras no toques la fecha, la app sigue al reloj: si la dejás abierta y pasa la medianoche,
 la vista salta sola al día nuevo. En cuanto navegás a otro día se queda ahí hasta que le des
