@@ -7,6 +7,7 @@ import {
   entryDuration,
   formatDuration,
   formatDayName,
+  groupByDay,
   formatWeekRange,
   startedInWeek,
   weekBounds,
@@ -317,5 +318,43 @@ describe('weeks', () => {
     expect(formatWeekRange(new Date(2026, 8, 30).getTime(), now)).toBe(
       '28 de septiembre al 4 de octubre',
     )
+  })
+})
+
+describe('groupByDay', () => {
+  it('gathers blocks into their days, newest first', () => {
+    const monday = new Date(2026, 8, 14, 9).getTime()
+    const tuesday = new Date(2026, 8, 15, 9).getTime()
+    const groups = groupByDay([
+      entry(monday, monday + HOUR),
+      entry(tuesday, tuesday + 2 * HOUR),
+      entry(monday + 4 * HOUR, monday + 5 * HOUR),
+    ])
+
+    expect(groups).toHaveLength(2)
+    expect(new Date(groups[0].day).getDate()).toBe(15)
+    expect(groups[0].total).toBe(2 * HOUR)
+    expect(groups[1].total).toBe(2 * HOUR)
+    expect(groups[1].entries).toHaveLength(2)
+  })
+
+  it('orders the blocks inside a day newest first', () => {
+    const day = new Date(2026, 8, 14, 8).getTime()
+    const groups = groupByDay([entry(day, day + HOUR), entry(day + 5 * HOUR, day + 6 * HOUR)])
+    expect(groups[0].entries[0].startedAt).toBe(day + 5 * HOUR)
+  })
+
+  it('keeps a block that runs past midnight in the day it started', () => {
+    const late = new Date(2026, 8, 14, 23).getTime()
+    const groups = groupByDay([entry(late, late + 3 * HOUR)])
+    expect(groups).toHaveLength(1)
+    expect(new Date(groups[0].day).getDate()).toBe(14)
+    expect(groups[0].total).toBe(3 * HOUR)
+  })
+
+  it('counts a running block up to now', () => {
+    const start = new Date(2026, 8, 14, 10).getTime()
+    const now = start + 90 * MINUTE
+    expect(groupByDay([entry(start, null)], now)[0].total).toBe(90 * MINUTE)
   })
 })

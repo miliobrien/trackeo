@@ -111,6 +111,28 @@ export function formatWeekRange(at: number, now: number = Date.now()): string {
   return `${first.getDate()} de ${month(first)} al ${last.getDate()} de ${month(last)}${year}`
 }
 
+/**
+ * Blocks gathered into the days they started on, newest day first, with the
+ * blocks inside each day also newest first.
+ */
+export function groupByDay(
+  entries: Entry[],
+  now: number = Date.now(),
+): { day: number; total: number; entries: Entry[] }[] {
+  const days = new Map<number, Entry[]>()
+  for (const entry of entries) {
+    const key = dayBounds(entry.startedAt).start
+    days.set(key, [...(days.get(key) ?? []), entry])
+  }
+  return [...days.entries()]
+    .map(([day, group]) => ({
+      day,
+      total: sumEntries(group, now),
+      entries: [...group].sort((a, b) => b.startedAt - a.startedAt),
+    }))
+    .sort((a, b) => b.day - a.day)
+}
+
 /** Whether two instants fall on the same local calendar day. */
 export function isSameDay(a: number, b: number): boolean {
   return dayBounds(a).start === dayBounds(b).start

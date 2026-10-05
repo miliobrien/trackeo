@@ -57,6 +57,10 @@ ventana.
   **Histórico** muestra el total de siempre.
 - **Seguir con una tarea:** tocá su nombre en la lista y arranca un bloque nuevo en esa misma
   tarea y proyecto, sin volver a escribirla. Si había otro cronómetro andando, se frena solo.
+- **Proyectos**, abajo de todo, es la carpeta de cada proyecto. Cerrada dice cuánto le
+  dedicaste y cuándo fue la última vez. Abierta despliega el historial completo, día por día,
+  con las tareas de cada día y sus horarios. Tocá la fecha de un día y la vista de arriba
+  salta a ese día.
 
 Mientras no toques la fecha, la app sigue al reloj: si la dejás abierta y pasa la medianoche,
 la vista salta sola al día nuevo. En cuanto navegás a otro día se queda ahí hasta que le des

@@ -11,6 +11,7 @@ import { BackupControls } from './components/BackupControls'
 import { DayRibbon } from './components/DayRibbon'
 import { EntryList } from './components/EntryList'
 import { ProjectTotals } from './components/ProjectTotals'
+import { ProjectsPanel } from './components/ProjectsPanel'
 import { TimerBar } from './components/TimerBar'
 import dotLogo from './assets/dot-logo.svg'
 
@@ -78,6 +79,16 @@ export default function App() {
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <EntryList entries={visible} projects={projects} tasks={tasks} day={day} now={now} />
         <ProjectTotals entries={entries} projects={projects} day={day} now={now} />
+      </div>
+
+      <div className="mt-6">
+        <ProjectsPanel
+          projects={projects}
+          tasks={tasks}
+          entries={entries}
+          now={now}
+          onPickDay={setPinnedDay}
+        />
       </div>
     </div>
   )
